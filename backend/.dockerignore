@@ -1,0 +1,13 @@
+.git
+.vs
+**/bin/
+**/obj/
+test/
+TestResults/
+**/TestResults/
+*.trx
+*.user
+*.suo
+*.log
+*.tmp
+.DS_Store

@@ -1,0 +1,16 @@
+.git
+.nuxt/
+.output/
+.nitro/
+.data/
+node_modules/
+dist/
+coverage/
+test/
+.env*
+!.env.example
+*.log
+README.md
+.DS_Store
+.idea/
+.vscode/
