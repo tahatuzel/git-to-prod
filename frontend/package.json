@@ -8,6 +8,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
+    "test": "npm run build && node --test test/proxy.test.mjs",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {

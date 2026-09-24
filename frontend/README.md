@@ -16,4 +16,5 @@ Geliştirmede Vite `/api/todo-items` isteklerini varsayılan olarak `http://loca
 - `npm run dev` — geliştirme sunucusu
 - `npm run typecheck` — Nuxt/TypeScript kontrolleri
 - `npm run lint` — ESLint
+- `npm test` — üretim Nuxt sunucusunun HTTP proxy testi (sahte backend kullanır)
 - `npm run build` — üretim derlemesi
