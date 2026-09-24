@@ -71,10 +71,10 @@ Bu dosya, proje yönergelerinin yanında oturumlar arası ortak durum ve devir n
 
 Adımları sırayla ve küçük, çalışır parçalar halinde ilerlet. Bir adımın kapsamı netleşince `[~]` yap; doğrulayıp tamamlayınca `[x]` yap ve sonraki adımın durumunu güncelle.
 
-1. [~] **Temel kararlar ve iskelet:** Backend için .NET 10 `Domain` class library oluşturuldu ve temel `TodoItem` entity'si eklendi. Frontend sürümü/araçları, çözüm yapısı, README ve yerel geliştirme yönergeleri bekliyor.
-2. [~] **Backend dikey dilimi:** Domain, Application ve Infrastructure temel katmanları hazır. API; CRUD controller'larını, DTO-command ve Application-response/API-response mapping'lerini, API response DTO'larını, Result/ErrorResponse HTTP yanıtlarını, global exception/model binding hata yanıtlarını, CORS ve environment bazlı appsettings dosyalarını içeriyor. Connection string değerleri kullanıcı tarafından doldurulacak; migration ve yerel PostgreSQL ile çalışma hâlâ bekliyor.
-3. [ ] **Frontend ve proxy:** Nuxt arayüzünü kur; temel To-do akışlarını ve Nuxt server route üzerinden backend proxy bağlantısını tamamla.
-4. [ ] **Testler:** Backend/frontend birim testlerini ve API-veritabanı entegrasyon testlerini ekle; yerel çalıştırma adımlarını belgele.
+1. [x] **Temel kararlar ve iskelet:** Backend için .NET 10 `Domain` class library ve temel `TodoItem` entity'si oluşturuldu. Frontend Nuxt 4 ve npm ile başlatıldı; yerel geliştirme yönergeleri frontend README'sinde.
+2. [x] **Backend dikey dilimi:** Domain, Application, Infrastructure ve API katmanları; TodoItem CRUD, API response DTO mapping'leri ve PostgreSQL erişimi hazır. `InitialCreate` migration'ı Development veritabanına uygulandı. Production connection string'i dağıtım öncesinde ayrıca girilecek.
+3. [x] **Frontend ve proxy:** Nuxt UI ile tek sayfalık CRUD arayüzü hazır. Geliştirmede Vite proxy, üretimde Nuxt server route backend isteklerini iletiyor.
+4. [~] **Testler:** Backend/frontend birim testlerini ve API-veritabanı entegrasyon testlerini ekle; yerel çalıştırma adımlarını belgele.
 5. [ ] **Yerel konteynerler:** Backend ve frontend Dockerfile'larını, kök Docker Compose düzenini oluştur; yerel Postgres ile geliştirme akışını doğrula.
 6. [ ] **CI ve main akışı:** GitHub Actions ile PR kontrollerini kur; başarılı zorunlu kontrollerden sonra main'e birleştirme politikasını ve image build/publish adımlarını yapılandır.
 7. [ ] **Dağıtım altyapısı:** Aynı VPC'de bir K3s server, iki K3s worker ve Kubernetes dışında ayrı PostgreSQL VM'i hazırla; erişim ve dağıtım yapılandırmasını güvenli biçimde belgele.
@@ -82,7 +82,8 @@ Adımları sırayla ve küçük, çalışır parçalar halinde ilerlet. Bir adı
 
 ## Şu Anki Durum
 
-- **Tamamlanan:** Kullanıcının ürün, mimari, teknoloji, konteyner, test, CI/CD ve dağıtım hedefleri bu dosyada toplandı. .NET 10 Domain, Application, Infrastructure ve API projeleri; TodoItem CRUD feature'ları ve repository akışı hazır.
-- **Devam eden adım:** Yol haritasının 2. adımı; API controller'ları, request DTO-command ve Application response-API response mapping'leri, açık API response DTO'ları, Result/ErrorResponse HTTP sözleşmesi, global hata işleme, CORS ve Development/Production appsettings dosyaları eklendi. Connection string değerleri bilerek boş bırakıldı.
-- **Sıradaki iş:** Kullanıcı Development ve Production connection string'lerini doldurduktan sonra ilk EF migration'ı oluşturup yerel PostgreSQL akışını doğrulamak.
-- **Doğrulama:** API ve referans verdiği katmanlar `dotnet build backend/src/Api/Api.csproj --no-restore --verbosity minimal -m:1 -nodeReuse:false` ile 0 uyarı ve 0 hatayla derlendi. API çalıştırılmadı; appsettings connection string alanları bilerek boş.
+- **Tamamlanan:** Kullanıcının ürün, mimari, teknoloji, konteyner, test, CI/CD ve dağıtım hedefleri bu dosyada toplandı. .NET 10 backend CRUD ve PostgreSQL akışı hazır; `InitialCreate` Development veritabanına uygulandı. Nuxt 4/Nuxt UI tek sayfa frontend CRUD akışları ve Vite/Nuxt proxy tamamlandı.
+- **Devam eden adım:** Yol haritasının 4. adımı; backend/frontend birim ve entegrasyon testleri bekliyor.
+- **Sıradaki iş:** Backend/frontend testlerini eklemek; ardından yerel konteynerler için Dockerfile ve Compose düzenine geçmek.
+- **Paket/güvenlik durumu:** EF Core/Design `10.0.12`, Npgsql EF provider `10.0.3`, AutoMapper `16.2.0`, MediatR `14.2.0` ve global `dotnet-ef` `10.0.12`. NPM `esbuild` override `^0.28.2` ile Windows dev-server açığı giderildi; NuGet ve npm audit'lerinde açık bulunmadı. TypeScript `6.0.3`, çünkü mevcut typescript-eslint parser `6.1` öncesini destekliyor; `7.0.2` henüz uyumlu değil. NuGet raporunda bazı design-time geçişli paketlerin yeni sürümleri var, ancak açık değiller.
+- **Doğrulama:** API projesi `dotnet build backend/src/Api/Api.csproj --no-restore --verbosity minimal -m:1 -nodeReuse:false` ile 0 uyarı ve 0 hatayla derlendi. EF migration listesinde `20260924042212_InitialCreate` göründü; Development PostgreSQL üzerinde CRUD, NotFound ve validation response akışları HTTP üzerinden doğrulandı ve geçici kayıtlar silindi. Frontend'de `npm run lint`, `npm run typecheck` ve `npm run build` başarılı; production homepage HTTP 200 verdi ve Nuxt proxy üzerinden POST/DELETE başarılı oldu. Build yalnızca Node `DEP0155` deprecation uyarıları verdi.

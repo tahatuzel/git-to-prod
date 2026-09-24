@@ -17,6 +17,7 @@ public static class ApiServiceConfiguration
         services.AddDatabase(configuration);
         services.AddCorsConfiguration(configuration);
         services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
 
         return services;
     }
