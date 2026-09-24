@@ -1,0 +1,74 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore unit test project
+        run: dotnet restore backend/test/UnitTests/UnitTests.csproj
+
+      - name: Run unit tests
+        run: dotnet test backend/test/UnitTests/UnitTests.csproj --no-restore --configuration Release
+
+  integration-tests:
+    name: Testcontainers integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore integration test project
+        run: dotnet restore backend/test/IntegrationTests/IntegrationTests.csproj
+
+      - name: Run integration tests
+        run: dotnet test backend/test/IntegrationTests/IntegrationTests.csproj --no-restore --configuration Release
+
+  backend-image:
+    name: Backend Docker image build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build backend image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./backend
+          push: false
+          load: true
+          tags: todo-backend:ci
+
+      - name: Verify backend image was built
+        run: docker image inspect todo-backend:ci
