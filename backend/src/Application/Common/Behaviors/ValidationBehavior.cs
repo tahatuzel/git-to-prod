@@ -1,4 +1,3 @@
-using Application.Common.ErrorHandling;
 using Application.Common.Results;
 using MediatR;
 
@@ -22,7 +21,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>(
 
         if (errors.Length > 0)
         {
-            return TResponse.Failure(new ErrorResult(errors));
+            return TResponse.Failure(errors);
         }
 
         return await next();

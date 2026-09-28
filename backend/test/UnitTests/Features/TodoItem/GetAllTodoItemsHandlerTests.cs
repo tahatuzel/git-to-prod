@@ -8,7 +8,7 @@ namespace UnitTests.Features.TodoItem;
 public sealed class GetAllTodoItemsHandlerTests
 {
     [Fact]
-    public async Task Returns_mapped_items()
+    public async Task Returns_items()
     {
         var repository = new FakeTodoItemRepository();
         repository.Items.Add(new TodoItemEntity { Id = 1, Title = "Read", Description = "Book" });
@@ -18,11 +18,13 @@ public sealed class GetAllTodoItemsHandlerTests
             .Handle(new TodoItemGetAllQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
+        var response = Assert.IsType<TodoItemGetAllQueryResponse>(result.Response);
         Assert.Equal(
             [
                 new TodoItemGetAllQueryResponseItem(1, "Read", "Book", false),
                 new TodoItemGetAllQueryResponseItem(2, "Write", "", true)
             ],
-            result.Value!.Items);
+            response.Items);
+        Assert.Empty(result.Errors);
     }
 }

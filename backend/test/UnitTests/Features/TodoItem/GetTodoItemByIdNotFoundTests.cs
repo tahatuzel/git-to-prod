@@ -14,6 +14,8 @@ public sealed class GetTodoItemByIdNotFoundTests
                 TodoItemTestMapper.Instance)
             .Handle(new TodoItemGetByIdQuery(5), CancellationToken.None);
 
-        TodoItemTestAssertions.AssertNotFound(result.Error, 5);
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.Response);
+        TodoItemTestAssertions.AssertNotFound(result.Errors, 5);
     }
 }

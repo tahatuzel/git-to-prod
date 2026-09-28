@@ -16,7 +16,7 @@ public sealed class TodoItemDeleteNotFoundApiTests(TodoItemsApiFixture fixture)
         using var response = await fixture.Client.DeleteAsync("/api/todo-items/2147483647", cancellationToken);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        var result = await response.Content.ReadFromJsonAsync<ApiResponse<TodoItemDeletedResponse>>(cancellationToken);
-        Assert.Contains(result!.ErrorResponse!.Errors, error => error.Code == "TodoItem.NotFound");
+        var result = await response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken);
+        Assert.Contains(result!.Errors, error => error.Code == "TodoItem.NotFound");
     }
 }

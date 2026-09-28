@@ -2,32 +2,39 @@ using Application.Common.ErrorHandling;
 
 namespace Application.Common.Results;
 
-public sealed class Result<TValue> : IResult<Result<TValue>>
+public sealed class Result<TResponse> : IResult<Result<TResponse>> where TResponse : IResponse
 {
-    private Result(TValue? value, ErrorResult? error)
+    private Result(TResponse? response, IReadOnlyList<Error> errors)
     {
-        Value = value;
-        Error = error;
+        Response = response;
+        Errors = errors;
     }
 
-    public bool IsSuccess => Error is null;
+    public bool IsSuccess => Errors.Count == 0;
 
-    public TValue? Value { get; }
+    public TResponse? Response { get; }
 
-    public ErrorResult? Error { get; }
+    public IReadOnlyList<Error> Errors { get; }
 
-    public static Result<TValue> Success(TValue value)
+    public static Result<TResponse> Success(TResponse response)
     {
-        return new Result<TValue>(value, null);
+        ArgumentNullException.ThrowIfNull(response);
+        return new Result<TResponse>(response, []);
     }
 
-    public static Result<TValue> Failure(Error error)
+    public static Result<TResponse> Failure(Error error)
     {
-        return Failure(new ErrorResult([error]));
+        return Failure([error]);
     }
 
-    public static Result<TValue> Failure(ErrorResult error)
+    public static Result<TResponse> Failure(IReadOnlyList<Error> errors)
     {
-        return new Result<TValue>(default, error);
+        ArgumentNullException.ThrowIfNull(errors);
+        if (errors.Count == 0)
+        {
+            throw new ArgumentException("A failure must contain at least one error.", nameof(errors));
+        }
+
+        return new Result<TResponse>(default, errors);
     }
 }

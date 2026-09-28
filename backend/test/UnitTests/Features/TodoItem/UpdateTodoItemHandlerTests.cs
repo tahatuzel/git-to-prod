@@ -18,7 +18,8 @@ public sealed class UpdateTodoItemHandlerTests
             .Handle(new TodoItemUpdateCommand(5, "New", "After", true), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(new TodoItemUpdateCommandResponse(5, "New", "After", true), result.Value);
+        Assert.Equal(new TodoItemUpdateCommandResponse(5, "New", "After", true), result.Response);
+        Assert.Empty(result.Errors);
         Assert.Same(item, repository.UpdatedItem);
         Assert.Equal(5, item.Id);
         Assert.Equal("New", item.Title);

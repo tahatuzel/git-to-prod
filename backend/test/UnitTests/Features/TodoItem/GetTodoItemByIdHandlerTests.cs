@@ -23,6 +23,7 @@ public sealed class GetTodoItemByIdHandlerTests
             .Handle(new TodoItemGetByIdQuery(5), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(new TodoItemGetByIdQueryResponse(5, "Read", "Book", true), result.Value);
+        Assert.Equal(new TodoItemGetByIdQueryResponse(5, "Read", "Book", true), result.Response);
+        Assert.Empty(result.Errors);
     }
 }

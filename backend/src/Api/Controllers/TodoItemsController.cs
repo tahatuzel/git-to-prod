@@ -21,14 +21,14 @@ public sealed class TodoItemsController(
     IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<TodoItemsResponse>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<TodoItemsResponse>> GetAll(CancellationToken cancellationToken)
     {
         var result = await sender.Send(new TodoItemGetAllQuery(), cancellationToken);
         return ToActionResult<TodoItemGetAllQueryResponse, TodoItemsResponse>(result);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ApiResponse<TodoItemResponse>>> GetById(
+    public async Task<ActionResult<TodoItemResponse>> GetById(
         int id,
         CancellationToken cancellationToken)
     {
@@ -37,27 +37,23 @@ public sealed class TodoItemsController(
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<TodoItemResponse>>> Create(
+    public async Task<ActionResult<TodoItemResponse>> Create(
         [FromBody] CreateTodoItemRequest request,
         CancellationToken cancellationToken)
     {
         var command = mapper.Map<TodoItemCreateCommand>(request);
         var result = await sender.Send(command, cancellationToken);
-
         if (!result.IsSuccess)
         {
-            return ToFailureResult<TodoItemResponse>(result.Error!);
+            return ToFailureResult<TodoItemResponse>(result.Errors);
         }
 
-        var response = mapper.Map<TodoItemResponse>(result.Value!);
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = response.Id },
-            ApiResponse<TodoItemResponse>.Success(response));
+        var response = mapper.Map<TodoItemResponse>(result.Response!);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<ApiResponse<TodoItemResponse>>> Update(
+    public async Task<ActionResult<TodoItemResponse>> Update(
         int id,
         [FromBody] UpdateTodoItemRequest request,
         CancellationToken cancellationToken)
@@ -68,7 +64,7 @@ public sealed class TodoItemsController(
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<ApiResponse<TodoItemDeletedResponse>>> Delete(
+    public async Task<ActionResult<TodoItemDeletedResponse>> Delete(
         int id,
         CancellationToken cancellationToken)
     {
@@ -76,23 +72,20 @@ public sealed class TodoItemsController(
         return ToActionResult<TodoItemDeleteCommandResponse, TodoItemDeletedResponse>(result);
     }
 
-    private ActionResult<ApiResponse<TApiResponse>> ToActionResult<TApplicationResponse, TApiResponse>(
+    private ActionResult<TApiResponse> ToActionResult<TApplicationResponse, TApiResponse>(
         Result<TApplicationResponse> result)
+        where TApplicationResponse : IResponse
     {
         if (!result.IsSuccess)
         {
-            return ToFailureResult<TApiResponse>(result.Error!);
+            return ToFailureResult<TApiResponse>(result.Errors);
         }
 
-        var response = mapper.Map<TApiResponse>(result.Value!);
-        return Ok(ApiResponse<TApiResponse>.Success(response));
+        return Ok(mapper.Map<TApiResponse>(result.Response!));
     }
 
-    private ActionResult<ApiResponse<TApiResponse>> ToFailureResult<TApiResponse>(ErrorResult errorResult)
+    private ActionResult<TResponse> ToFailureResult<TResponse>(IReadOnlyList<Error> errors)
     {
-        var errorResponse = mapper.Map<ErrorResponse>(errorResult);
-        return StatusCode(
-            errorResult.ToHttpStatusCode(),
-            ApiResponse<TApiResponse>.Failure(errorResponse));
+        return StatusCode(errors.ToHttpStatusCode(), ErrorResponse.FromErrors(errors));
     }
 }

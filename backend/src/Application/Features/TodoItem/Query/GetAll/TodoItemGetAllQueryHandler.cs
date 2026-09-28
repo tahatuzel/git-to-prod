@@ -15,7 +15,6 @@ public sealed class TodoItemGetAllQueryHandler(
     {
         var todoItems = await repository.GetAllAsync(cancellationToken);
         var items = mapper.Map<List<TodoItemGetAllQueryResponseItem>>(todoItems);
-
         return Result<TodoItemGetAllQueryResponse>.Success(new TodoItemGetAllQueryResponse(items));
     }
 }

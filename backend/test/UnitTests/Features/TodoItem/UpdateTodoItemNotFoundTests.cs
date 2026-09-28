@@ -14,7 +14,9 @@ public sealed class UpdateTodoItemNotFoundTests
         var result = await new TodoItemUpdateCommandHandler(repository, TodoItemTestMapper.Instance)
             .Handle(new TodoItemUpdateCommand(5, "New", "After", false), CancellationToken.None);
 
-        TodoItemTestAssertions.AssertNotFound(result.Error, 5);
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.Response);
+        TodoItemTestAssertions.AssertNotFound(result.Errors, 5);
         Assert.Null(repository.UpdatedItem);
     }
 }

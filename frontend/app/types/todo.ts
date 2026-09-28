@@ -15,17 +15,10 @@ export interface ApiError {
   code: string
   message: string
   propertyName: string | null
-  type: number
 }
 
-export interface ApiEnvelope<T> {
-  result: {
-    isSuccess: boolean
-  }
-  response: T | null
-  errorResponse: {
-    errors: ApiError[]
-  } | null
+export interface ApiErrorResponse {
+  errors: ApiError[]
 }
 
 export type TodoFilter = 'all' | 'open' | 'completed'

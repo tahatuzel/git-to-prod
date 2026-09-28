@@ -4,14 +4,14 @@ namespace Api.ErrorHandling;
 
 public static class ApiResponseExtensions
 {
-    public static int ToHttpStatusCode(this ErrorResult errorResult)
+    public static int ToHttpStatusCode(this IReadOnlyList<Error> errors)
     {
-        if (errorResult.Errors.Any(error => error.Type == ErrorType.Unexpected))
+        if (errors.Any(error => error.Type == ErrorType.Unexpected))
         {
             return StatusCodes.Status500InternalServerError;
         }
 
-        if (errorResult.Errors.All(error => error.Type == ErrorType.NotFound))
+        if (errors.All(error => error.Type == ErrorType.NotFound))
         {
             return StatusCodes.Status404NotFound;
         }

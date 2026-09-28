@@ -4,5 +4,5 @@ namespace Application.Common.Results;
 
 public interface IResult<TSelf> where TSelf : IResult<TSelf>
 {
-    static abstract TSelf Failure(ErrorResult error);
+    static abstract TSelf Failure(IReadOnlyList<Error> errors);
 }

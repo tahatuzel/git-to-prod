@@ -1,4 +1,4 @@
-import type { ApiEnvelope, TodoItem, TodoItemInput } from '~/types/todo'
+import type { ApiErrorResponse, TodoItem, TodoItemInput } from '~/types/todo'
 
 interface RequestOptions {
   method: 'POST' | 'PUT' | 'DELETE'
@@ -6,14 +6,7 @@ interface RequestOptions {
 }
 
 async function request<T>(url: string, options?: RequestOptions): Promise<T> {
-  const envelope = await $fetch<ApiEnvelope<T>>(url, options)
-
-  if (!envelope.result.isSuccess || envelope.response === null) {
-    const message = envelope.errorResponse?.errors.map(error => error.message).join(' ')
-    throw new Error(message || 'İstek tamamlanamadı.')
-  }
-
-  return envelope.response
+  return $fetch<T>(url, options)
 }
 
 export const todoItemsApi = {
@@ -45,8 +38,8 @@ export const todoItemsApi = {
 
 export function getApiErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null && 'data' in error) {
-    const payload = (error as { data?: ApiEnvelope<unknown> }).data
-    const messages = payload?.errorResponse?.errors.map(apiError => apiError.message)
+    const payload = (error as { data?: ApiErrorResponse }).data
+    const messages = payload?.errors?.map(apiError => apiError.message)
 
     if (messages?.length) {
       return messages.join(' ')

@@ -11,9 +11,11 @@ public sealed class DeleteTodoItemNotFoundTests
     {
         var repository = new FakeTodoItemRepository();
 
-        var result = await new TodoItemDeleteCommandHandler(repository, TodoItemTestMapper.Instance)
+        var result = await new TodoItemDeleteCommandHandler(repository)
             .Handle(new TodoItemDeleteCommand(5), CancellationToken.None);
 
-        TodoItemTestAssertions.AssertNotFound(result.Error, 5);
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.Response);
+        TodoItemTestAssertions.AssertNotFound(result.Errors, 5);
     }
 }

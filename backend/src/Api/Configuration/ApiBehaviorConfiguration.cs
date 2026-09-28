@@ -23,7 +23,7 @@ public static class ApiBehaviorConfiguration
                         ErrorType.Validation)))
                     .ToArray();
 
-                var response = ApiResponse<object>.Failure(new ErrorResponse(errors));
+                var response = ErrorResponse.FromErrors(errors);
                 return new BadRequestObjectResult(response);
             };
         });

@@ -15,7 +15,8 @@ public sealed class CreateTodoItemHandlerTests
             .Handle(new TodoItemCreateCommand("Read", "Book", true), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(new TodoItemCreateCommandResponse(1, "Read", "Book", true), result.Value);
+        Assert.Equal(new TodoItemCreateCommandResponse(1, "Read", "Book", true), result.Response);
+        Assert.Empty(result.Errors);
         Assert.Single(repository.Items);
         Assert.Equal(1, repository.Items[0].Id);
         Assert.Equal("Read", repository.Items[0].Title);

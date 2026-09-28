@@ -13,11 +13,12 @@ public sealed class DeleteTodoItemHandlerTests
         var repository = new FakeTodoItemRepository();
         repository.Items.Add(new TodoItemEntity { Id = 5 });
 
-        var result = await new TodoItemDeleteCommandHandler(repository, TodoItemTestMapper.Instance)
+        var result = await new TodoItemDeleteCommandHandler(repository)
             .Handle(new TodoItemDeleteCommand(5), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(new TodoItemDeleteCommandResponse(5), result.Value);
+        Assert.Equal(new TodoItemDeleteCommandResponse(5), result.Response);
+        Assert.Empty(result.Errors);
         Assert.Empty(repository.Items);
     }
 }

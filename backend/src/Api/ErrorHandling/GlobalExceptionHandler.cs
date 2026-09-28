@@ -30,7 +30,7 @@ public sealed class GlobalExceptionHandler(
             "General.Unexpected",
             "An unexpected error occurred.",
             Type: ErrorType.Unexpected);
-        var response = ApiResponse<object>.Failure(new ErrorResponse([error]));
+        var response = ErrorResponse.FromErrors([error]);
 
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
         return true;

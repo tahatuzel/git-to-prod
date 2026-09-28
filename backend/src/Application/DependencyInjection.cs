@@ -23,7 +23,6 @@ public static class DependencyInjection
         {
             configuration.LicenseKey = luckyPennyLicenseKey;
             configuration.RegisterServicesFromAssembly(applicationAssembly);
-            configuration.AddOpenBehavior(typeof(ExceptionHandlingBehavior<,>));
             configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
 

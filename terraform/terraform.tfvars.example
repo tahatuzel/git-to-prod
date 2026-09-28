@@ -1,0 +1,2 @@
+aws_region    = "eu-central-1"
+ssh_key_name  = "existing-ec2-key-pair-name"

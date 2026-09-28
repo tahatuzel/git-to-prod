@@ -22,36 +22,34 @@ public sealed class TodoItemsCrudApiTests(TodoItemsApiFixture fixture)
 
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
         Assert.NotNull(createResponse.Headers.Location);
-        var created = await createResponse.Content.ReadFromJsonAsync<ApiResponse<TodoItemResponse>>(cancellationToken);
+        var created = await createResponse.Content.ReadFromJsonAsync<TodoItemResponse>(cancellationToken);
         Assert.NotNull(created);
-        Assert.True(created.Result.IsSuccess);
-        Assert.NotNull(created.Response);
-        var id = created.Response.Id;
+        var id = created.Id;
         Assert.True(id > 0);
         Assert.Equal($"/api/todo-items/{id}", createResponse.Headers.Location!.AbsolutePath);
 
-        var fetched = await client.GetFromJsonAsync<ApiResponse<TodoItemResponse>>($"/api/todo-items/{id}", cancellationToken);
+        var fetched = await client.GetFromJsonAsync<TodoItemResponse>($"/api/todo-items/{id}", cancellationToken);
         Assert.NotNull(fetched);
-        Assert.Equal("First task", fetched.Response?.Title);
+        Assert.Equal("First task", fetched.Title);
 
-        var list = await client.GetFromJsonAsync<ApiResponse<TodoItemsResponse>>("/api/todo-items", cancellationToken);
+        var list = await client.GetFromJsonAsync<TodoItemsResponse>("/api/todo-items", cancellationToken);
         Assert.NotNull(list);
-        Assert.Contains(list.Response!.Items, item => item.Id == id);
+        Assert.Contains(list.Items, item => item.Id == id);
 
         using var updateResponse = await client.PutAsJsonAsync(
             $"/api/todo-items/{id}",
             new UpdateTodoItemRequest("Updated task", "Done", true),
             cancellationToken);
         Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
-        var updated = await updateResponse.Content.ReadFromJsonAsync<ApiResponse<TodoItemResponse>>(cancellationToken);
+        var updated = await updateResponse.Content.ReadFromJsonAsync<TodoItemResponse>(cancellationToken);
         Assert.NotNull(updated);
-        Assert.Equal("Updated task", updated.Response?.Title);
-        Assert.True(updated.Response?.IsCompleted);
+        Assert.Equal("Updated task", updated.Title);
+        Assert.True(updated.IsCompleted);
 
         using var deleteResponse = await client.DeleteAsync($"/api/todo-items/{id}", cancellationToken);
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
-        var deleted = await deleteResponse.Content.ReadFromJsonAsync<ApiResponse<TodoItemDeletedResponse>>(cancellationToken);
-        Assert.Equal(id, deleted?.Response?.Id);
+        var deleted = await deleteResponse.Content.ReadFromJsonAsync<TodoItemDeletedResponse>(cancellationToken);
+        Assert.Equal(id, deleted?.Id);
 
         using var missingResponse = await client.GetAsync($"/api/todo-items/{id}", cancellationToken);
         Assert.Equal(HttpStatusCode.NotFound, missingResponse.StatusCode);
