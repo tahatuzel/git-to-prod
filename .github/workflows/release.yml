@@ -50,6 +50,9 @@ jobs:
           dotnet tool install --global dotnet-ef --version 10.0.12
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
+      - name: Restore backend projects
+        run: dotnet restore backend/src/Api/Api.csproj
+
       - name: Build Linux migration bundle
         env:
           ASPNETCORE_ENVIRONMENT: Production
