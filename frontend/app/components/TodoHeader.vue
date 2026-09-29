@@ -19,7 +19,7 @@ defineProps<{
         Yapılacaklar
       </h1>
       <p class="mt-2 text-muted">
-        Aklındakileri sıraya koy, gerisini tek tek hallet.
+        Aklındakileri sıraya koy.
       </p>
     </div>
 
