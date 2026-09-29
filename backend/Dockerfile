@@ -7,6 +7,7 @@ RUN dotnet publish ./src/Api/Api.csproj \
     --configuration Release \
     --no-restore \
     --output /app/publish
+RUN rm /app/publish/appsettings.Development.json
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
