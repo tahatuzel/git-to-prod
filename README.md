@@ -71,7 +71,22 @@ dotnet test backend/test/IntegrationTests/IntegrationTests.csproj
 cd frontend && npm ci && npm run lint && npm run typecheck && npm test
 ```
 
-Yerel uygulamayı PostgreSQL hazırken `docker compose up --build` ile başlatıp `http://localhost:3000` adresinden açabilirsiniz. Nuxt, `/api/todo-items` isteklerini backend'e sunucu tarafında iletir.
+PostgreSQL ve veritabanı şeması hazırken `backend/src/Api/appsettings.Development.json` bağlantı ayarlarını düzenleyin. Host makinedeki PostgreSQL için `Host=host.docker.internal` kullanın.
+
+Ayar dosyasını container'a bağlamak için proje kökünde `docker-compose.local.yml` oluşturun:
+
+```yaml
+services:
+  backend:
+    volumes:
+      - ./backend/src/Api/appsettings.Development.json:/app/appsettings.Development.json:ro
+```
+
+Proje kökünde çalıştırın ve `http://localhost:3000` adresini açın:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+```
 
 ## Portföy demosunun sınırları
 
